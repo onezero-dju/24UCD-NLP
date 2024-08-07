@@ -1,7 +1,6 @@
 .DS_Store
 
 _ignore/
-_model/*
 
 .venv
 .env
