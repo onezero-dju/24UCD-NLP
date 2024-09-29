@@ -26,10 +26,10 @@ class BasicQA(dspy.Signature):
     """Answer questions with short factoid answers."""
     question = dspy.InputField()
     # answer = dspy.OutputField(desc="often between 1 and 5 words")
-    answer = dspy.OutputField(desc="최소 5 문장 이상")
+    answer = dspy.OutputField(desc="3 문장 이하")
 
 #Pass signature to Predict module
-generate_answer = dspy.Predict(BasicQA)
+generate_answer = dspy.ChainOfThought(BasicQA)
 
 # Call the predictor on a particular input.
 question='안녕? 너는 누구고 무엇을 할 수 있는지 소개해줄래?'
