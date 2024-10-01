@@ -1,8 +1,8 @@
 import dspy
 from llama_cpp import Llama
 
-lm_gemma2 = Llama(
-    model_path="../../_ignore/model/gemma-2-9b-it-Q4_K_M.gguf",
+lm_gemma2 = Llama(  # TODO: make the path to the model more robust
+    model_path="app/ml_models/language_model/gemma-2-9b-it-Q4_K_M.gguf",
     n_gpu_layers=-1,
     n_ctx=0,
     verbose=False       

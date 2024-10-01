@@ -1,0 +1,13 @@
+.venv
+.git
+
+_ignore
+__pycache__
+prompt_eng
+.ipynb_checkpoints
+
+.gitignore
+*.ipynb
+*.md
+*.yaml
+*.yaml
