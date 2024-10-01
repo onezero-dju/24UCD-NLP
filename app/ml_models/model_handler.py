@@ -41,5 +41,13 @@ class ModelHandler():
     
     def predict(self, *args):
         return self.test_question()
+    
+    def answer(self, question: dict):
+        out = self.generate_answer(question=question['question'])
+        
+        # print(f"Question: {question}")
+        print(f"Answer: {out.answer}")
+        
+        return out
 
 print(ModelHandler().test_question())

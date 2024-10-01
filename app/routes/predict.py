@@ -11,3 +11,8 @@ model_handler = ModelHandler()
 async def predict(data: dict):
     prediction = model_handler.predict(data)
     return {"prediction": prediction}
+
+@router.post("/answer")
+async def answer(question: dict):
+    answering = model_handler.answer(question)
+    return {"응답": answering}
