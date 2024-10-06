@@ -1,6 +1,10 @@
 .DS_Store
 
 _ignore/
+__pycache__
 
 .venv
 .env
+
+# ML model
+*.gguf

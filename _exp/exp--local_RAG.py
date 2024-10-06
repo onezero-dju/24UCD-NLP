@@ -1,4 +1,4 @@
-from qdrant_client import QdrantClient
+from app.vdb_client import QdrantClient
 client = QdrantClient("localhost", port=6333)
 
 
@@ -21,7 +21,7 @@ llamalm = dspy.LlamaCpp(
     temperature=0.4
 )
 
-dspy.settings.configure(lm=llamalm)
+# dspy.settings.configure(lm=llamalm)
 
 
 from dspy.retrieve.qdrant_rm import QdrantRM
@@ -35,7 +35,7 @@ class RAG(dspy.Module):
         self.retrieve = dspy.Retrieve(k=num_passages)
         self.generate_answer = dspy.ChainOfThought("context, question -> answer")
     
-    def forward(self, question):
+    def forward(self, question):  #? what is the purpose of this method? And how does it interact??
         context = self.retrieve(question).passages
         prediction = self.generate_answer(context=context, question=question)
         return dspy.Prediction(context=context, answer=prediction.answer)

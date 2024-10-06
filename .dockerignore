@@ -1,0 +1,30 @@
+# environments
+.venv
+.git
+
+# special directories
+_ignore
+_exp
+**/__pycache__/
+**/.ipynb_checkpoints/
+**/.cache/
+
+# general directories
+prompt_eng
+notebooks
+
+# files
+.env
+.gitignore
+**/*.txt
+**/*.ipynb
+**/*.md
+**/*.yml
+**/*.yaml
+**/*.log
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# exceptions
+!requirements.txt
