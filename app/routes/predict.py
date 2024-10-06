@@ -7,10 +7,10 @@ router = APIRouter()
 # model_handler = ModelHandler(MODEL_PATH)
 model_handler = ModelHandler()
 
-@router.post("/predict")
+@router.post("/lm_greet")
 async def predict(data: dict):
-    prediction = model_handler.predict(data)
-    return {"prediction": prediction}
+    lm_greeting = model_handler.lm_greet(data)
+    return {"lm_greet": lm_greeting}
 
 @router.post("/answer")
 async def answer(question: dict):

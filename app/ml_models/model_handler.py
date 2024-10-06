@@ -30,7 +30,7 @@ class ModelHandler():
         # Pass signature to 'ChainOfThought' module
         self.generate_answer = dspy.ChainOfThought(BasicQA)
     
-    def test_question(self):
+    def greet_question(self):
         question='안녕? 너는 누구고 무엇을 할 수 있는지 소개해줄래?'
         pred = self.generate_answer(question=question)
         
@@ -39,8 +39,8 @@ class ModelHandler():
         
         return pred
     
-    def predict(self, *args):
-        return self.test_question()
+    def lm_greet(self, *args):
+        return self.greet_question()
     
     def answer(self, question: dict):
         out = self.generate_answer(question=question['question'])
@@ -49,5 +49,3 @@ class ModelHandler():
         print(f"Answer: {out.answer}")
         
         return out
-
-print(ModelHandler().test_question())
