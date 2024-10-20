@@ -12,6 +12,7 @@ _exp
 # general directories
 prompt_eng
 notebooks
+data
 
 # files
 .env
