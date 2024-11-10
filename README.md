@@ -49,5 +49,5 @@
 [![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run/?git_repo=https://github.com/onezero-dju/24UCD-NLP.git&dir=.)
 
 ```bash
-wget https://huggingface.co/lmstudio-community/gemma-2-9b-it-GGUF/resolve/main/gemma-2-9b-it-Q4_K_M.gguf ./24UCD-NLP/app/ml_models/language_model/
+wget https://huggingface.co/lmstudio-community/gemma-2-9b-it-GGUF/resolve/main/gemma-2-9b-it-Q4_K_M.gguf -P ./24UCD-NLP/app/ml_models/language_model/
 ```

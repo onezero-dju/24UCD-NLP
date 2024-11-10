@@ -1,9 +1,9 @@
-from app.routes import predict
+from app.routers import inference
 from fastapi import FastAPI
 from typing import Union
 
 app = FastAPI()
-app.include_router(predict.router)
+app.include_router(inference.router)
 
 @app.get("/")
 def read_root():
