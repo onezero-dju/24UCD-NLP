@@ -11,38 +11,34 @@ model_sbert = SentenceTransformer('sentence-transformers/paraphrase-multilingual
 
 # 문장 분할 함수
 def split_sentences(text):
-    # 간단한 문장 분할 (정규 표현식 사용)
     sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', text)
     return [sentence.strip() for sentence in sentences if sentence.strip()]
 
-# JSON 입력 데이터를 처리하는 함수
-def process_input(json_data, threshold=0.6):
-    # JSON 데이터를 파싱
+# JSON 입력 데이터를 처리하는 함수 (중복되지 않은 안건 추출)
+def process_non_overlapping_input(json_data, threshold=0.6):
     agenda_dict = json_data["agenda"]
     transcript = json_data["transcript"]
 
     # Agenda 문장 리스트로 변환
     agenda_sentences = list(agenda_dict.values())
-
-    # Transcript 문장을 분할
     transcript_sentences = split_sentences(transcript)
 
     # Sentence-BERT로 문장 임베딩 계산
     embeddings_agenda = model_sbert.encode(agenda_sentences, convert_to_tensor=True).to(device)
     embeddings_transcript = model_sbert.encode(transcript_sentences, convert_to_tensor=True).to(device)
 
-    # 중복되지 않은 안건 인덱스 도출
-    non_overlapping_indices = []
+    # 중복되지 않은 안건 도출
+    non_overlapping_agenda = {}
     for i, (index, sentence) in enumerate(agenda_dict.items()):
         # 각 agenda 문장과 transcript 문장 간의 최대 유사도 계산
         similarities = util.pytorch_cos_sim(embeddings_agenda[i], embeddings_transcript)
         max_similarity = torch.max(similarities).item()
 
-        # 유사도가 임계값 이하인 경우에만 인덱스를 추가
+        # 유사도가 임계값 이하인 경우 중복되지 않은 안건으로 간주
         if max_similarity < threshold:
-            non_overlapping_indices.append(int(index))
+            non_overlapping_agenda[index] = sentence
 
-    return non_overlapping_indices
+    return non_overlapping_agenda
 
 # 테스트용 JSON 입력 예시
 input_json = """
@@ -66,7 +62,7 @@ input_json = """
 input_data = json.loads(input_json)
 
 # 중복되지 않은 회의 안건 도출
-non_overlapping_indices = process_input(input_data)
+non_overlapping_agenda = process_non_overlapping_input(input_data)
 
 # 결과 출력
-print(non_overlapping_indices)
+print(non_overlapping_agenda)
