@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.nlp.model_handler import BasicHandler
+from api_custom.nlp_link.model_handler import BasicHandler
 # from app.config import MODEL_PATH
 
 router = APIRouter()

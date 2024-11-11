@@ -1,4 +1,4 @@
-from app.routers import inference
+from api_custom.routers import inference
 from fastapi import FastAPI
 from typing import Union
 
