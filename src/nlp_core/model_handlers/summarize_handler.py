@@ -5,7 +5,7 @@ class SummarizeTranscript(dspy.Signature):
     """Verify that the text is based on the provided context."""
 
     transcript: str = dspy.InputField(desc="transcript")
-    summary: str = dspy.OutputField(desc="요약. '-한다.'체로 작성.")
+    summary: str = dspy.OutputField(desc="3줄 요약. '-한다.'체로 작성.")
 
 
 # DSPy program for summarization
@@ -22,18 +22,24 @@ class BlockSummarizer(dspy.Module):
 class FinalSummarizer(dspy.Module):
     def __init__(self):
         super().__init__()
-        # self.summarize_transcript = dspy.ChainOfThought("transcript -> summary") # if needed, add `, agenda_comparison`
-        self.summarize_transcript = dspy.ChainOfThought(SummarizeTranscript)
+        self.summarize_transcript = dspy.ChainOfThought("summaries -> total_summary")
 
     def forward(self, transcript: str):
         return self.summarize_transcript(transcript=transcript)
 
 
 if __name__ == "__main__":
+    from pathlib import Path
+    import sys
+    # Resolve the path to the 'nlp_core' directory and add it to `sys.path`
+    project_dir = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(project_dir))
+
+    import __init__  # import `__init__` to import DSPy configuration
+    
     conference_summarizer = BlockSummarizer()
     
     test_string = "\
-        다음 글을 3 문장으로 요약해줘. \
         집중과 몰입을 강조할 때, 초보적인 독자가 가지기 쉬운 오류는 그것이 빠른 속도에서 얻어지는 것이라고 착각한다는 사실입니다. \
         결론적으로 말해 집중이나 몰입은 속도와는 무관한 ‘정신의 고조상태’를 말할 뿐입니다. \
         오히려 여러분이 분명히 아셔야 될 것은 좋은 독서 전체에서 ‘느림과 여유의 미학’이 차지하는 비중이 무려 70~80%에 이른다는 점입니다. \
@@ -49,5 +55,5 @@ if __name__ == "__main__":
         졸업생의 무려 58%가 도쿄대에 합격하고, 특히 낙타가 바늘구멍 들어가기보다 어렵다는 100명 정원의 도쿄대 의대 합격생을 한 해에만 16명을 배출하는 기염을 토합니다.\
     "
     
-    print(conference_summarizer.forward(test_string))
+    print(conference_summarizer.forward(transcript=test_string))
 # end main

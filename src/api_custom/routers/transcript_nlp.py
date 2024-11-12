@@ -9,9 +9,9 @@ router = APIRouter()
 block_summarizer = BlockSummarizer()
 
 @router.post("/nlp/in-mtg")
-async def summarize_block(request):
+async def summarize_block(request: dict):
     mentioned_agendas = None
-    block_summary = block_summarizer.forward()
+    block_summary = block_summarizer.forward(request["transcript"])
     return {
         "mentioned_agendas": mentioned_agendas,
         "block_summary": block_summary
