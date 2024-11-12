@@ -13,6 +13,10 @@ _exp
 prompt_eng
 notebooks
 data
+docs
+lib
+scripts
+compare_agenda
 
 # files
 .env

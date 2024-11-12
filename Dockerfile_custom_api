@@ -1,20 +1,22 @@
 # Official Base Image
 FROM python:3.12
 
-# Set the current working directory to `/code`
-WORKDIR /code
+# Set the current working directory to `/app`
+WORKDIR /app
 
-# Copy the file with the requirements to the `/code` directory
-COPY ./requirements.txt /code/requirements.txt
+# Copy the file with the requirements to the `/app` directory
+COPY ./requirements.txt /app/requirements.txt
 
 # Install the package dependencies in the requirements file
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-# Copy the ./app directory inside the /code directory
-COPY ./app /code/app
+# Copy the needed directories
+COPY ./src/nlp_core /app/src/nlp_core
+COPY ./src/api_custom /app/src/api_custom
+COPY ./models /app/models
 
 # Set the command to use `fastapi run`, which uses Uvicorn underneath
-CMD ["fastapi", "run", "app/services/main.py", "--port", "80"]
+CMD ["fastapi", "run", "src/api_custom/main.py", "--port", "80"]
 
 # < Ref. >
 # https://fastapi.tiangolo.com/deployment/docker/#dockerfile
