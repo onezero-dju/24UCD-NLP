@@ -1,9 +1,10 @@
-from api_custom.routers import inference
+from api_custom.routers import _test_lm_comm as test, transcript_nlp
 from fastapi import FastAPI
 from typing import Union
 
 app = FastAPI()
-app.include_router(inference.router)
+app.include_router(test.router)
+# app.include_router(transcript_nlp.router)
 
 @app.get("/")
 def read_root():
