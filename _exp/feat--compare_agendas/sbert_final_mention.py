@@ -34,8 +34,8 @@ def process_non_overlapping_input(json_data, threshold=0.6):
         similarities = util.pytorch_cos_sim(embeddings_agenda[i], embeddings_transcript)
         max_similarity = torch.max(similarities).item()
 
-        # 유사도가 임계값 이하인 경우 중복되지 않은 안건으로 간주
-        if max_similarity < threshold:
+        # 유사도가 임계값 이상인 경우 안급한 안건으로 판단
+        if max_similarity >= threshold:
             non_overlapping_agenda[index] = sentence
 
     return non_overlapping_agenda
