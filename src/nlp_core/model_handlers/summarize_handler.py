@@ -12,11 +12,11 @@ class SummarizeTranscript(dspy.Signature):
 class BlockSummarizer(dspy.Module):
     def __init__(self):
         super().__init__()
-        # self.summarize_transcript = dspy.ChainOfThought("transcript -> summary") # if needed, add `, agenda_comparison`
+        # self.summarize_transcript = dspy.ChainOfThought("transcript -> summary")
         self.summarize_transcript = dspy.ChainOfThought(SummarizeTranscript)
 
     def forward(self, transcript: str):
-        return self.summarize_transcript(transcript=transcript)
+        return self.summarize_transcript(transcript=transcript)["summary"]
 
 
 class FinalSummarizer(dspy.Module):

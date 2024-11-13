@@ -17,7 +17,7 @@ summarize_lm = dspy.LlamaCpp(
     model="gemma_2",
     llama_model=lm_gemma2,
     model_type="text",
-    temperature=0.4,
+    temperature=0.2,
     max_tokens=500
 )
 
