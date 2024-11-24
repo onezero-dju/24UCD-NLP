@@ -1,5 +1,19 @@
-# Official Base Image
-FROM python:3.12
+# NVIDIA CUDA Base Image (CUDA 12.4, Python 3.12, Ubuntu 22.04 기반)
+FROM nvidia/cuda:12.4.0-devel-ubuntu22.04
+
+# Install 'PIP' and upgrade Python dependencies
+RUN apt-get update && apt update && \
+    apt-get install -y \
+        git \
+        ninja-build \
+        python3-pip \
+        software-properties-common && \
+    add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt install gcc-11 g++-11 && \
+    update-alternatives \
+        --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 \
+        --slave /usr/bin/g++ g++ /usr/bin/g++-11 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the current working directory to `/app`
 WORKDIR /app
@@ -7,8 +21,18 @@ WORKDIR /app
 # Copy the file with the requirements to the `/app` directory
 COPY ./requirements.txt /app/requirements.txt
 
-# Install the package dependencies in the requirements file
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+ENV CMAKE_ARGS="\
+        -DGGML_CUDA=on \
+        -DCUDA_PATH=/usr/local/cuda-12.4 \
+        -DCUDAToolkit_ROOT=/usr/local/cuda-12.4 \
+        -DCUDAToolkit_INCLUDE_DIR=/usr/local/cuda-12/include \
+        -DCUDAToolkit_LIBRARY_DIR=/usr/local/cuda-12.4/lib64"
+
+# Install the requirements
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt && \
+    # Reinstall 'llama-cpp-python' with CUDA Support
+    FORCE_CMAKE=1 pip install \
+        llama-cpp-python --no-cache-dir --force-reinstall --upgrade
 
 # Copy the needed directories
 COPY ./src/nlp_core /app/src/nlp_core
@@ -20,3 +44,4 @@ CMD ["fastapi", "run", "src/api_custom/main.py", "--port", "80"]
 
 # < Ref. >
 # https://fastapi.tiangolo.com/deployment/docker/#dockerfile
+# https://medium.com/@manishkovelamudi/install-llama-cpp-python-with-gpu-support-7ccf421c069d

@@ -3,8 +3,8 @@ qdrant-client
 datasets
 # fastembed
 dspy-ai
-# At this time(24.8.7), the package below occurs installation error which did not appear on the day before
 llama-cpp-python
 fastapi[standard]
 runpod
 sentence-transformers  # for agenda comparing (includes 'torch')
+cmake  # for Docker image build
