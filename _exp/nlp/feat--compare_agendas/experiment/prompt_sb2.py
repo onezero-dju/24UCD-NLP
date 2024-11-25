@@ -6,8 +6,9 @@ model_sbert = SentenceTransformer("sentence-transformers/paraphrase-multilingual
 
 # 문장 임베딩 함수
 def get_sbert_embeddings(sentences):
-    embeddings = model_sbert.encode(sentences, convert_to_tensor=True, show_progress_bar=False)
-    return embeddings
+    return model_sbert.encode(
+        sentences, convert_to_tensor=True, show_progress_bar=False
+    )
 
 # 중복되지 않은 문장 비교 함수 (평균 유사도 사용)
 def compare_sentences_sbert(agenda_sentences, stt_sentences, threshold=0.3):

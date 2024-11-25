@@ -54,4 +54,4 @@ async def extract_agenda(data: AgendaInput):
         # 결과 반환
         return {"non_overlapping_indices": non_overlapping_indices}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e

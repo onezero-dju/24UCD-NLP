@@ -4,30 +4,37 @@ import torch
 import re
 
 
-def get_device():
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-        print(f"CUDA 사용 가능. 선택된 디바이스: {torch.cuda.get_device_name(device)}")
-    elif torch.backends.mps.is_available():
-        device = torch.device("mps")
-        print("MPS 사용 가능. Apple Metal GPU 사용.")
-    else:
-        device = torch.device("cpu")
-        print("GPU 사용 불가. CPU 사용.")
-    return device
+class ModelConfig:
+    def __init__(self):
+        self.device = self._get_device()
+        self.model = \
+            SentenceTransformer(  # Sentence-BERT 모델 로드
+                'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
+            ).to(self.device)
 
-device = get_device()  # 사용 가능한 GPU 장치 사용 (Nvidia, MPS 중)
+    def _get_device(self):
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+            print(f"CUDA 사용 가능. 선택된 디바이스: {torch.cuda.get_device_name(device)}")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+            print("MPS 사용 가능. Apple Metal GPU 사용.")
+        else:
+            device = torch.device("cpu")
+            print("GPU 사용 불가. CPU 사용.")
+        return device  # 사용 가능한 GPU 장치 사용 (Nvidia, MPS 중)
 
-# Sentence-BERT 모델 로드
-model_sbert = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2').to(device)
 
-# 문장 분할 함수
+# 정규표현식을 이용한 문장 분할
 def split_sentences(text):
     sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', text)
     return [sentence.strip() for sentence in sentences if sentence.strip()]
 
 # JSON 입력 데이터를 처리하는 함수 (중복되지 않은 안건 추출)
 def get_mentioned_agendas(json_data, threshold=0.6):
+    config = ModelConfig()
+    model_sbert = config.model
+    
     agenda_dict = json_data["agendas"]
     transcript = json_data["transcript"]
 
@@ -36,19 +43,25 @@ def get_mentioned_agendas(json_data, threshold=0.6):
     transcript_sentences = split_sentences(transcript)
 
     # Sentence-BERT로 문장 임베딩 계산
-    embeddings_agenda = model_sbert.encode(agenda_sentences, convert_to_tensor=True).to(device)
-    embeddings_transcript = model_sbert.encode(transcript_sentences, convert_to_tensor=True).to(device)
+    emb_agendas = model_sbert\
+                    .encode(agenda_sentences,
+                            convert_to_tensor=True)\
+                    .to(config.device)
+    emb_transcript = model_sbert\
+                        .encode(transcript_sentences,
+                                convert_to_tensor=True)\
+                        .to(config.device)
 
-    # 중복되지 않은 안건 도출
+    # 언급한 안건 도출
     mentioned_agendas = {}
-    for i, (index, sentence) in enumerate(agenda_dict.items()):
+    for i, (idx, sentence) in enumerate(agenda_dict.items()):
         # 각 agenda 문장과 transcript 문장 간의 최대 유사도 계산
-        similarities = util.pytorch_cos_sim(embeddings_agenda[i], embeddings_transcript)
+        similarities = util.pytorch_cos_sim(emb_agendas[i], emb_transcript)
         max_similarity = torch.max(similarities).item()
 
         # 유사도가 임계값 이상인 경우 안급한 안건으로 판단
         if max_similarity >= threshold:
-            mentioned_agendas[index] = sentence
+            mentioned_agendas[idx] = sentence
 
     return mentioned_agendas
 

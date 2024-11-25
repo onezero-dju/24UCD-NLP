@@ -14,11 +14,9 @@ from prompt import kr_prompts
 def create_prompt_input(agenda_phrases, stt_phrases):
     # kr_prompts에서 프롬프트 생성
     prompt = kr_prompts["context"].format(context=' '.join(stt_phrases))
-    
+
     # 회의 안건과 회의 내용 사이의 비교를 위한 프롬프트 결합
-    combined_agenda = [f"{agenda}: {prompt}" for agenda in agenda_phrases]
-    
-    return combined_agenda
+    return [f"{agenda}: {prompt}" for agenda in agenda_phrases]
 
 # 문장 단위로 비교하여 중복되지 않은 항목 도출
 def compare_sentences(agenda_sentences, stt_sentences, threshold=0.6):  # 문장 단위로 비교, threshold 조정
