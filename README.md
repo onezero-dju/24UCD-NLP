@@ -1,4 +1,4 @@
-# [ 2024 UCD ] -- RAG
+# [ 2024 UCD ] -- NLP
 
 > [!NOTE]  
 > '2024 UCD' 프로젝트와 관련된 레포지토리이다.
@@ -10,38 +10,46 @@
 >
 > → *24.9.29 기준, DSPy의 버전 릴리즈에 llama.cpp가 사용 가능함에 따라 더 이상 `.venv/`를 추적하지 않는다. 다만, DSPy 버전 2.6부터는 `dspy.LM`을 제외한 LM 클라이언트를 지원하지 않을 예정이라고 한다(현재 v.2.5). 이에 따라 장기적인 유지보수를 위한 코드 변경이 필요하다.*
 
-```
+```text
 .
-│
-├── app/
-│   ├── __init__.py               # 패키지 초기화 파일
-│   ├── main.py                   # API 서버를 실행하는 메인 파일
-│   ├── routes/                   # API 라우트 (엔드포인트) 디렉토리
-│   │   ├── __init__.py
-│   │   ├── users.py              # 예: 사용자 관련 엔드포인트
-│   │   └── items.py              # 예: 아이템 관련 엔드포인트
-│   ├── models/                   # 데이터베이스 모델 디렉토리
-│   │   ├── __init__.py
-│   │   └── user.py               # 예: 사용자 모델
-│   ├── services/                 # 비즈니스 로직 및 서비스 계층
-│   │   ├── __init__.py
-│   │   └── user_service.py       # 예: 사용자 관련 비즈니스 로직
-│   ├── schemas/                  # 데이터 검증 및 직렬화 스키마
-│   │   ├── __init__.py
-│   │   └── user_schema.py        # 예: 사용자 관련 데이터 스키마
-│   └── config.py                 # 설정 파일
-│
-├── tests/                        # 테스트 코드 디렉토리
-│   ├── __init__.py
-│   ├── test_main.py              # 예: 메인 엔드포인트 테스트
-│   └── test_user.py              # 예: 사용자 관련 테스트
-│
-├── Dockerfile                    # Docker 이미지 생성을 위한 파일
-├── docker-compose.yml            # Docker Compose 파일 (여러 컨테이너를 관리할 때 사용)
-├── requirements.txt              # 프로젝트 의존성 목록
-├── .env                          # 환경 변수 파일 (개발/운영 설정)
-├── .gitignore                    # Git에서 무시할 파일/디렉토리 목록
-└── README.md                     # 프로젝트 설명 파일
+├── Dockerfile_custom_api               # 도커 이미지 빌드용 파일 (커스텀 API)
+├── Dockerfile_runpod_api               # 도커 이미지 빌드용 파일 (RunPod SDK 기반)
+├── README.md
+├── _exp/                               # 실험 파일 디렉토리
+├── data/
+├── lib/
+├── models/
+├── notebooks/
+│   └── README.md
+├── requirements.txt                    # 의존성 패키지 목록
+├── scripts/
+│   ├── build_docker_image.sh
+│   ├── download_model.sh
+│   └── initialize_virtual_env.py
+└── src/
+    ├── api_custom
+    │   ├── __init__.py
+    │   ├── main.py
+    │   ├── nlp_link -> ../nlp_core
+    │   ├── routers                     # API 라우트 (엔드포인트) 디렉토리
+    │   │   ├── _test_lm_comm.py
+    │   │   └── transcript_nlp.py
+    │   └── services
+    │       ├── __init__.py
+    │       └── vdb_client.py
+    ├── api_runpod
+    │   ├── __init__.py
+    │   └── main.py
+    └── nlp_core
+        ├── README.md
+        ├── __init__.py
+        ├── dspy_signatures.py
+        ├── metric
+        │   └── evaluate_model.py
+        └── model_handlers
+            ├── _basic_handler.py
+            ├── agenda_handler.py
+            └── summarize_handler.py
 ```
 
 아래 버튼을 클릭하여 서비스를 실행할 수 있다. 다만, 이 레포에 모델은 실려있지 않으므로, 클라우드 환경에서 모델을 다운로드 하고 적절한 디렉토리에 넣을 필요가 있다. 빠른 방법으로는 버튼 아래의 스크립트를 Cloud Shell 상에서 실행하면 된다.
