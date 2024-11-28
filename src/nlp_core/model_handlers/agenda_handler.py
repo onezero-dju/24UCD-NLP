@@ -35,8 +35,8 @@ def get_mentioned_agendas(json_data, threshold=0.6):
     config = ModelConfig()
     model_sbert = config.model
     
-    agenda_dict = json_data["agendas"]
-    transcript = json_data["transcript"]
+    agenda_dict = json_data["agendas_to_check"]
+    transcript = json_data["block_transcript"]
 
     # Agenda 문장 리스트로 변환
     agenda_sentences = list(agenda_dict.values())

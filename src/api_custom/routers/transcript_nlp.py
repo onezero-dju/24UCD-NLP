@@ -14,7 +14,7 @@ async def summarize_block(
 ) -> dict[str, dict[str, str | dict[str, str]]]:
     
     mentioned_agendas = get_mentioned_agendas(request)
-    block_summary = block_summarizer.forward(request["transcript"])
+    block_summary = block_summarizer.forward(request["block_transcript"])
     return {
         "output": {
             "mentioned_agendas": mentioned_agendas,
@@ -36,11 +36,11 @@ async def conclude(
                             unmentioned_agendas=unmentioned_agendas,
                             block_summary_chain=block_summary_chain)
     total_summary = final_summarizer.get_total_summary()
-    offered_agenda = final_summarizer.get_agenda_offer()
+    suggested_agenda = final_summarizer.get_agenda_suggest()
     
     return {
         "output": {
             "total_summary": total_summary,
-            "offered_agenda": offered_agenda
+            "suggested_agenda": suggested_agenda
         }
     }

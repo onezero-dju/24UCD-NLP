@@ -30,7 +30,7 @@ class FinalSummarizer(Module):
                         block_summary_chain=self.block_summary_chain
                     )["total_summary"]
     
-    def get_agenda_offer(self) -> str:
+    def get_agenda_suggest(self) -> str:
         return self.suggest_agenda(
                         unmentioned_agendas=str(self.unmentioned_agendas),
                         block_summary_chain=self.block_summary_chain
