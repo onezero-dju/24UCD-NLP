@@ -1,31 +1,86 @@
 import dspy
 
 
-class SummarizeTranscript(dspy.Signature):
-    """Verify that the text is based on the provided context."""
+class SummarizeBlockTranscript(dspy.Signature):
+    """
+    〈 DSPy `Signature` 〉  
+    Summarize the block transcript
+    """
 
     transcript: str = dspy.InputField(desc="transcript")
-    summary: str = dspy.OutputField(desc="3줄 요약. '-한다.'체로 작성.")
+    summary: str = dspy.OutputField(
+        desc="""
+        Generate summary of the context in Korean less than 3 sentences.
+        Only output the result, not the process.
+        The end of each sentences should be as '한다'.
+        """)
 
 
+class SummarizeTotal(dspy.Signature):
+    """
+    〈 DSPy `Signature` 〉  
+    Generate summary of the total summaries concatenated
+    """
+    
+    block_summary_chain: str = dspy.InputField(desc="concatenated summaries")
+    
+    total_summary: str = dspy.OutputField(
+        desc="""
+        Generate a comprehensive summary in Korean.
+        Only output the result, not the process.
+        The end of each sentences should be as '한다'.
+        """)
+
+
+class SuggestAgenda(dspy.Signature):
+    """
+    〈 DSPy `Signature` 〉  
+    Suggest future agendas for
+    """
+    
+    block_summary_chain: str = dspy.InputField(desc="concatenated summaries")
+    unmentioned_agendas: dict[str, str] = dspy.InputField(desc="")
+    
+    suggested_agenda: str = dspy.OutputField(
+        desc="""
+        'block_summary_chain'에 따라 앞으로 얘기해볼만한 안건을 추천.
+        한국어로 작성.
+        """)
+    
 # DSPy program for summarization
 class BlockSummarizer(dspy.Module):
     def __init__(self):
         super().__init__()
         # self.summarize_transcript = dspy.ChainOfThought("transcript -> summary")
-        self.summarize_transcript = dspy.ChainOfThought(SummarizeTranscript)
+        self.summarize_transcript = dspy.ChainOfThought(SummarizeBlockTranscript)
 
     def forward(self, transcript: str):
         return self.summarize_transcript(transcript=transcript)["summary"]
 
 
 class FinalSummarizer(dspy.Module):
-    def __init__(self):
+    def __init__(self,
+                 unmentioned_agendas: dict[str, str],
+                 block_summary_chain: str,):
         super().__init__()
-        self.summarize_transcript = dspy.ChainOfThought("summaries -> total_summary")
-
-    def forward(self, transcript: str):
-        return self.summarize_transcript(transcript=transcript)
+        self.unmentioned_agendas = unmentioned_agendas
+        self.block_summary_chain = block_summary_chain
+        
+        self.summarize_summary_chain = \
+            dspy.ChainOfThought(SummarizeTotal)            
+        self.suggest_agenda = \
+            dspy.ChainOfThought(SuggestAgenda)
+        
+    def get_total_summary(self) -> str:
+        return self.summarize_summary_chain(
+                        block_summary_chain=self.block_summary_chain
+                    )["total_summary"]
+    
+    def get_agenda_offer(self) -> str:
+        return self.suggest_agenda(
+                        unmentioned_agendas=str(self.unmentioned_agendas),
+                        block_summary_chain=self.block_summary_chain
+                    )["suggested_agenda"]
 
 
 if __name__ == "__main__":

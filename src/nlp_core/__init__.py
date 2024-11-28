@@ -16,9 +16,9 @@ lm_gemma2 = Llama(
 summarize_lm = dspy.LlamaCpp(
     model="gemma_2",
     llama_model=lm_gemma2,
-    model_type="text",
+    model_type="chat",  # "text"로 하면 마크다운 문법으로 출력한다.
     temperature=0.2,
-    max_tokens=500
+    max_tokens=700  # 반환(출력) 시 최대 토큰 수
 )
 
 dspy.settings.configure(lm=summarize_lm)
