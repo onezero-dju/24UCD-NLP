@@ -12,6 +12,11 @@ _exp
 # general directories
 prompt_eng
 notebooks
+data
+docs
+lib
+scripts
+compare_agenda
 
 # files
 .env

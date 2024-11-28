@@ -8,3 +8,7 @@ __pycache__
 
 # ML model
 *.gguf
+
+# dataset
+data/_original/
+!data/README.md
